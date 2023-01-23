@@ -12,8 +12,8 @@ from handlers.common import register_handlers_common
 from handlers.calculator import register_handlers_calc
 from handlers.inline_mode import register_inline_handlers
 from handlers.rock_paper_scissors_handlers import register_user_handlers
-from handlers.other_handlers import register_other_handlers
 from handlers.chatgpd_handlers import register_chatgpd_handlers
+from handlers.other_handlers import register_other_handlers
 
 from config_data.config import Config, load_config
 
@@ -26,9 +26,9 @@ def register_all_handlers(dp: Dispatcher) -> None:
     register_handlers_common(dp)
     register_handlers_calc(dp)
     register_handlers_food(dp)
-    register_chatgpd_handlers(dp)
     register_inline_handlers(dp)
     register_user_handlers(dp)
+    register_chatgpd_handlers(dp)
     register_other_handlers(dp)
 
 

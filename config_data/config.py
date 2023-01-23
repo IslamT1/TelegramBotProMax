@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 from environs import Env
 
+
 @dataclass
 class DatabaseConfig:
     database: str  # Название базы данных
@@ -13,6 +14,7 @@ class DatabaseConfig:
 class TgBot:
     token: str  # Токен для доступа к телеграм-боту
     admin_ids: list[int]  # Список id администраторов бота
+    openai_token: str
 
 
 @dataclass
@@ -29,7 +31,8 @@ def load_config() -> Config:
 
     # Создаем экземпляр класса Config и наполняем его данными из переменных окружения
     return Config(tg_bot=TgBot(token=env('BOT_TOKEN'),
-                               admin_ids=list(map(int, env.list('ADMIN_IDS')))),
+                               admin_ids=list(map(int, env.list('ADMIN_IDS'))),
+                               openai_token=env('OPEN_AI_TOKEN')),
                   db=DatabaseConfig(database=env('DATABASE'),
                                     db_host=env('DB_HOST'),
                                     db_user=env('DB_USER'),
