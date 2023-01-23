@@ -21,6 +21,7 @@ from config_data.config import Config, load_config
 # Инициализируем логгер
 logger = logging.getLogger(__name__)
 
+
 # Функция для регистрации всех хэндлеров
 def register_all_handlers(dp: Dispatcher) -> None:
     register_handlers_common(dp)
@@ -31,6 +32,7 @@ def register_all_handlers(dp: Dispatcher) -> None:
     register_inline_handlers(dp)
     register_user_handlers(dp)
     register_other_handlers(dp)
+
 
 # Функция конфигурирования и запуска бота
 async def main():
@@ -61,6 +63,7 @@ async def main():
         await dp.start_polling()
     finally:
         await bot.close()
+
 
 if __name__ == '__main__':
     try:

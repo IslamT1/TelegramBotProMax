@@ -5,17 +5,21 @@ cursor = conn.cursor()
 
 
 def get_links(search_query: str = None):
-    statement = "SELECT * from slovarrkb"
     if search_query:
-        statement += f" WHERE slovo LIKE ? LIMIT 50"
-        result = cursor.execute(statement, (f"{search_query}%",))
+        statement = f"""SELECT _id, slovo, perevod FROM slovarrkb WHERE slovo LIKE '{search_query}%'
+                        UNION ALL
+                        SELECT _id + 100000, slovo, perevod FROM slovarkbr WHERE slovo LIKE '{search_query}%'
+                        ORDER BY slovo
+                        LIMIT 50"""
+        print(statement)
     else:
-        statement += f" LIMIT 50"
-        result = cursor.execute(statement)
-    statement += f""
+        statement = f"""SELECT _id, slovo, perevod FROM slovarrkb
+                        UNION ALL
+                        SELECT _id + 100000, slovo, perevod FROM slovarkbr
+                        ORDER BY slovo
+                        LIMIT 50"""
+    result = cursor.execute(statement)
     return result.fetchall()
-
-
 
 # # Основа этого файла взята из https://github.com/alexey-goloburdin/telegram-finance-bot/blob/master/db.py
 #

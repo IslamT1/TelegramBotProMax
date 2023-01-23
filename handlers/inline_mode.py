@@ -1,12 +1,12 @@
 import logging
 from aiogram import Dispatcher, types
-from aiogram.utils.markdown import quote_html
 from app.dbworker import get_links
 from bs4 import BeautifulSoup
 import re
 
 # as recommendation, compile once only
 CLEANR = re.compile('<.*?>')
+
 
 # Для убирания незакрытого тега
 def fix_html(text):
@@ -16,26 +16,26 @@ def fix_html(text):
             item.unwrap()
     return soup
 
+
 async def inline_handler(query: types.InlineQuery):
     slova = get_links(query.query or None)
     if len(slova) == 0:
-        switch_text = "Не найдено слов по данному запросу."
+        switch_text = "Перейти в бота >>"
         return await query.answer([],
-                                cache_time=60,
-                                is_personal=True,
-                                switch_pm_parameter="qwer",
-                                switch_pm_text=switch_text)
+                                  cache_time=60,
+                                  is_personal=True,
+                                  switch_pm_parameter="qwer",
+                                  switch_pm_text=switch_text)
     articles = [types.InlineQueryResultArticle(
-                id=item[0],
-                title=item[1],
-                description=re.sub(CLEANR, '', item[2]),
-                # url=f"https://youtu.be/{item[0]}",
-                hide_url=True,
-                # thumb_url=f"https://img.youtube.com/vi/{item[0]}/1.jpg",
-                input_message_content=types.InputTextMessageContent(
-                    message_text=f"<b>{item[1]}</b> - {fix_html(item[2])}",
-                    parse_mode="HTML"
-                )) for item in slova]
+        id=item[0],
+        title=item[1],
+        description=re.sub(CLEANR, '', item[2])[:150],
+        hide_url=True,
+        # thumb_url=f"https://img.youtube.com/vi/{item[0]}/1.jpg",
+        input_message_content=types.InputTextMessageContent(
+            message_text=f"<b>{item[1]}</b> - {fix_html(item[2][:5000])}",
+            parse_mode="HTML"
+        )) for item in slova]
     await query.answer(articles,
                        cache_time=60,
                        is_personal=True)
