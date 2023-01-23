@@ -11,7 +11,6 @@ def get_links(search_query: str = None):
                         SELECT _id + 100000, slovo, perevod FROM slovarkbr WHERE slovo LIKE '{search_query}%'
                         ORDER BY slovo
                         LIMIT 50"""
-        print(statement)
     else:
         statement = f"""SELECT _id, slovo, perevod FROM slovarrkb
                         UNION ALL
