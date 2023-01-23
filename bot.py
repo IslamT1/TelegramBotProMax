@@ -1,6 +1,7 @@
 import asyncio
 import logging
 
+from aiogram import types
 from aiogram import Bot, Dispatcher
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
 
@@ -12,10 +13,11 @@ from handlers.calculator import register_handlers_calc
 from handlers.inline_mode import register_inline_handlers
 from handlers.adding_links import register_add_links_handlers
 from handlers.manage_links import register_manage_links_handlers
-from handlers.user_handlers import register_user_handlers
+from handlers.rock_paper_scissors_handlers import register_user_handlers
 from handlers.other_handlers import register_other_handlers
 
 from config_data.config import Config, load_config
+
 # Инициализируем логгер
 logger = logging.getLogger(__name__)
 
@@ -44,7 +46,7 @@ async def main():
     config: Config = load_config()
 
     # Объявление и инициализация объектов бота и диспетчера
-    bot = Bot(token=config.tg_bot.token)
+    bot = Bot(token=config.tg_bot.token, parse_mode=types.ParseMode.HTML)
     dp = Dispatcher(bot, storage=MemoryStorage())
 
     # Регистрируем все хэндлеры
