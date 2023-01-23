@@ -7,6 +7,7 @@ async def set_main_menu(dp: Dispatcher):
         BotCommand(command="/start", description="Запустить"),
         BotCommand(command="/help", description="Помощь"),
         BotCommand(command="/calc", description="Калькулятор"),
+        BotCommand(command="/dictionary", description="Словарь"),
         BotCommand(command="/rock_paper_scissors", description="Камень, ножницы, бумага"),
         BotCommand(command="/food", description="Заказать блюда"),
         BotCommand(command="/add", description="Добавить новую ссылку"),

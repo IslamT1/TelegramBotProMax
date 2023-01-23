@@ -5,6 +5,19 @@ cursor = conn.cursor()
 
 
 def get_links(search_query: str = None):
+    """
+        Получает список слов и их переводы из базы данных.
+        Функция ищет слова в двух таблицах slovarrkb и slovarkbr
+        и возвращает до 50 результатов, соответствующих поисковому запросу.
+        Если поисковый запрос не указан, функция возвращает первые 50 результатов
+        из обеих таблиц, отсортированные по слову.
+
+        Параметры:
+        search_query (str, необязательный): слово для поиска. По умолчанию нет.
+
+        Возвращает:
+        список: список кортежей, содержащих идентификатор слова, слово и перевод.
+    """
     if search_query:
         statement = f"""SELECT _id, slovo, perevod FROM slovarrkb WHERE slovo LIKE '{search_query}%'
                         UNION ALL
@@ -19,63 +32,3 @@ def get_links(search_query: str = None):
                         LIMIT 50"""
     result = cursor.execute(statement)
     return result.fetchall()
-
-# # Основа этого файла взята из https://github.com/alexey-goloburdin/telegram-finance-bot/blob/master/db.py
-#
-# import sqlite3
-#
-# conn = sqlite3.connect("database.db")
-# cursor = conn.cursor()
-#
-#
-# def get_cursor():
-#     return cursor
-#
-#
-# def insert_or_update(user_id: int, youtube_hash: str, description: str):
-#     statement = "INSERT INTO youtube (user_id, youtube_hash, description) " \
-#                 "VALUES (:user_id, :youtube_hash, :description) " \
-#                 "ON CONFLICT(user_id, youtube_hash) " \
-#                 "DO UPDATE SET description = :description"
-#     cursor.execute(statement, {
-#         "user_id": user_id,
-#         "youtube_hash": youtube_hash,
-#         "description": description
-#     })
-#     cursor.connection.commit()
-#
-#
-# def delete(user_id: int, youtube_hash: str):
-#     statement = "DELETE from youtube WHERE user_id = ? and youtube_hash = ?"
-#     cursor.execute(statement, (user_id, youtube_hash))
-#     cursor.connection.commit()
-#
-#
-# def get_links(user_id: int, search_query: str = None):
-#     statement = "SELECT youtube_hash, description from youtube WHERE user_id = ?"
-#     if search_query:
-#         statement += f" AND description LIKE ?"
-#         result = cursor.execute(statement, (user_id, f"%{search_query}%"))
-#     else:
-#         result = cursor.execute(statement, (user_id,))
-#     return result.fetchall()
-#
-#
-# def _init_db():
-#     """Инициализирует БД"""
-#     with open("app/create_database.sql", "r") as f:
-#         sql = f.read()
-#     cursor.executescript(sql)
-#     conn.commit()
-#
-#
-# def check_db_exists():
-#     """Проверяет, инициализирована ли БД, если нет — инициализирует"""
-#     cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='youtube'")
-#     table_exists = cursor.fetchall()
-#     if table_exists:
-#         return
-#     _init_db()
-#
-#
-# check_db_exists()
