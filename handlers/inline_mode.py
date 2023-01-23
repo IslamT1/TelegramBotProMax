@@ -64,4 +64,4 @@ async def chosen_handler(chosen_result: types.ChosenInlineResult):
 def register_inline_handlers(dp: Dispatcher):
     dp.register_inline_handler(inline_handler, state="*")
     dp.register_chosen_inline_handler(chosen_handler, state="*")
-    dp.register_message_handler(switch_to_inline_button, commands="dictionary")
+    dp.register_message_handler(switch_to_inline_button, commands="dict")
