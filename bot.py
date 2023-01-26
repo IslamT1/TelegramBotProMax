@@ -1,5 +1,8 @@
 import asyncio
 import logging
+import openai
+
+from app.dbworker import get_cursor
 
 from aiogram import types
 from aiogram import Bot, Dispatcher
@@ -23,12 +26,12 @@ logger = logging.getLogger(__name__)
 
 # Функция для регистрации всех хэндлеров
 def register_all_handlers(dp: Dispatcher) -> None:
-    register_handlers_common(dp)
     register_handlers_calc(dp)
     register_handlers_food(dp)
     register_inline_handlers(dp)
     register_user_handlers(dp)
     register_chatgpd_handlers(dp)
+    register_handlers_common(dp)
     register_other_handlers(dp)
 
 
@@ -48,6 +51,7 @@ async def main():
     # Объявление и инициализация объектов бота и диспетчера
     bot = Bot(token=config.tg_bot.token, parse_mode=types.ParseMode.HTML)
     dp = Dispatcher(bot, storage=MemoryStorage())
+    openai.api_key = config.tg_bot.openai_token
 
     # Регистрируем все хэндлеры
     register_all_handlers(dp)
@@ -61,6 +65,7 @@ async def main():
         await dp.start_polling()
     finally:
         await bot.close()
+        get_cursor().close()
 
 
 if __name__ == '__main__':

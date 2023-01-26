@@ -4,6 +4,10 @@ conn = sqlite3.connect("slovarbr.db")
 cursor = conn.cursor()
 
 
+def get_cursor():
+    return cursor
+
+
 def get_links(search_query: str = None):
     """
         Получает список слов и их переводы из базы данных.

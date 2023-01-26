@@ -8,9 +8,9 @@ async def set_main_menu(dp: Dispatcher):
         BotCommand(command="/help", description="Помощь"),
         BotCommand(command="/calc", description="Калькулятор"),
         BotCommand(command="/dict", description="Словарь"),
-        BotCommand(command="/chatgpd", description="Chat GPD"),
+        BotCommand(command="/chatgpd", description="ChatGPD"),
         BotCommand(command="/rock_paper_scissors", description="Камень, ножницы, бумага"),
         BotCommand(command="/food", description="Заказать блюда"),
-        BotCommand(command="/cancel", description="Отменить текущее действие")
+        BotCommand(command="/stop", description="Сбросить текущее состояние")
     ]
     await dp.bot.set_my_commands(main_menu_commands)
