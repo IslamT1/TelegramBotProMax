@@ -1,4 +1,4 @@
-from aiogram import Dispatcher
+from aiogram import Dispatcher, types
 from aiogram.types import Message
 from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters import Text
@@ -27,7 +27,7 @@ async def process_yes_answer(message: Message, state: FSMContext):
 
 # Этот хэндлер срабатывает на отказ пользователя играть в игру
 async def process_no_answer(message: Message, state: FSMContext):
-    await message.answer(text=LEXICON_RU['no'])
+    await message.answer(text=LEXICON_RU['no'], reply_markup=types.ReplyKeyboardRemove())
     await state.finish()
 
 
