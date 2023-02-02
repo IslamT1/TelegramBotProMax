@@ -9,14 +9,14 @@ from aiogram import Bot, Dispatcher
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
 
 from keyboards.set_menu import set_main_menu
-
 from handlers.food import register_handlers_food
 from handlers.common import register_handlers_common
 from handlers.calculator import register_handlers_calc
 from handlers.inline_mode import register_inline_handlers
-from handlers.rock_paper_scissors_handlers import register_user_handlers
-from handlers.chatgpd_handlers import register_chatgpd_handlers
+from handlers.book_handlers import register_book_handlers
 from handlers.other_handlers import register_other_handlers
+from handlers.chatgpd_handlers import register_chatgpd_handlers
+from handlers.rock_paper_scissors_handlers import register_user_handlers
 
 from config_data.config import Config, load_config
 
@@ -27,6 +27,7 @@ logger = logging.getLogger(__name__)
 # Функция для регистрации всех хэндлеров
 def register_all_handlers(dp: Dispatcher) -> None:
     register_handlers_calc(dp)
+    register_book_handlers(dp)
     register_handlers_food(dp)
     register_inline_handlers(dp)
     register_user_handlers(dp)

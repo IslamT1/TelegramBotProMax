@@ -4,11 +4,11 @@ from aiogram.types import Message
 from lexicon.lexicon_ru import LEXICON_RU
 
 
-# Хэндлер для текстовых сообщений, которые не попали в другие хэндлеры
+# РҐСЌРЅРґР»РµСЂ РґР»СЏ С‚РµРєСЃС‚РѕРІС‹С… СЃРѕРѕР±С‰РµРЅРёР№, РєРѕС‚РѕСЂС‹Рµ РЅРµ РїРѕРїР°Р»Рё РІ РґСЂСѓРіРёРµ С…СЌРЅРґР»РµСЂС‹
 async def send_answer(message: Message):
     await message.answer(text=LEXICON_RU['other_answer'])
 
 
-# Функция для регистрации хэндлера. Вызывается в исполняемом файле bot.py
+# Р¤СѓРЅРєС†РёСЏ РґР»СЏ СЂРµРіРёСЃС‚СЂР°С†РёРё С…СЌРЅРґР»РµСЂР°. Р’С‹Р·С‹РІР°РµС‚СЃСЏ РІ РёСЃРїРѕР»РЅСЏРµРјРѕРј С„Р°Р№Р»Рµ bot.py
 def register_other_handlers(dp: Dispatcher):
     dp.register_message_handler(send_answer, state="*")

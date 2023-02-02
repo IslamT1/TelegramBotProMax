@@ -1,5 +1,6 @@
 import logging
 from aiogram import Dispatcher, types
+from aiogram.dispatcher import FSMContext
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 from app.dbworker import get_links
 from bs4 import BeautifulSoup
@@ -44,7 +45,7 @@ async def inline_handler(query: types.InlineQuery):
 
 
 # Кнопки для открытия инлайн режима
-async def switch_to_inline_button(message: types.Message):
+async def switch_to_inline_button(message: types.Message, state: FSMContext):
     inline_kb = InlineKeyboardMarkup(
         inline_keyboard=[
             [InlineKeyboardButton("Открыть инлайн режим", switch_inline_query_current_chat='')],
@@ -53,6 +54,7 @@ async def switch_to_inline_button(message: types.Message):
     await message.bot.send_message(chat_id=message.chat.id,
                                    text="Нажми на кнопку чтобы открыть инлайн режим.",
                                    reply_markup=inline_kb)
+    await state.finish()
 
 
 # Хэндлер для сбора статистики (не забудьте включить сбор у @BotFather)
@@ -64,4 +66,4 @@ async def chosen_handler(chosen_result: types.ChosenInlineResult):
 def register_inline_handlers(dp: Dispatcher):
     dp.register_inline_handler(inline_handler, state="*")
     dp.register_chosen_inline_handler(chosen_handler, state="*")
-    dp.register_message_handler(switch_to_inline_button, commands="dict")
+    dp.register_message_handler(switch_to_inline_button, commands="dict", state="*")
