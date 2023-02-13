@@ -8,7 +8,9 @@ from keyboards.bookmarks_kb import (create_bookmarks_keyboard,
                                     create_edit_keyboard)
 from keyboards.pagination_kb import create_pagination_keyboard
 from lexicon.lexicon_ru import LEXICON_RU
-from services.file_handling import book
+from app.bookdbworker import get_page
+
+lenbook = 13
 
 
 # Этот хэндлер будет срабатывать на команду "/beginning"
@@ -17,12 +19,12 @@ async def process_beginning_command(message: Message):
     if message.from_user.id not in users_db:
         users_db[message.from_user.id] = deepcopy(user_dict_template)
     users_db[message.from_user.id]['page'] = 1
-    text = book[users_db[message.from_user.id]['page']]
+    text = get_page(users_db[message.from_user.id]['page'])
     await message.answer(
         text=text,
         reply_markup=create_pagination_keyboard(
             'backward',
-            f'{users_db[message.from_user.id]["page"]}/{len(book)}',
+            f'{users_db[message.from_user.id]["page"]}/{lenbook}',
             'forward'))
 
 
@@ -32,12 +34,12 @@ async def process_beginning_command(message: Message):
 async def process_continue_command(message: Message):
     if message.from_user.id not in users_db:
         users_db[message.from_user.id] = deepcopy(user_dict_template)
-    text = book[users_db[message.from_user.id]['page']]
+    text = get_page(users_db[message.from_user.id]['page'])
     await message.answer(
         text=text,
         reply_markup=create_pagination_keyboard(
             'backward',
-            f'{users_db[message.from_user.id]["page"]}/{len(book)}',
+            f'{users_db[message.from_user.id]["page"]}/{lenbook}',
             'forward'))
 
 
@@ -59,14 +61,14 @@ async def process_bookmarks_command(message: Message):
 # Этот хэндлер будет срабатывать на нажатие инлайн-кнопки "вперед"
 # во время взаимодействия пользователя с сообщением-книгой
 async def process_forward_press(callback: CallbackQuery):
-    if users_db[callback.from_user.id]['page'] < len(book):
+    if users_db[callback.from_user.id]['page'] < lenbook:
         users_db[callback.from_user.id]['page'] += 1
-        text = book[users_db[callback.from_user.id]['page']]
+        text = get_page(users_db[callback.from_user.id]['page'])
         await callback.message.edit_text(
             text=text,
             reply_markup=create_pagination_keyboard(
                 'backward',
-                f'{users_db[callback.from_user.id]["page"]}/{len(book)}',
+                f'{users_db[callback.from_user.id]["page"]}/{lenbook}',
                 'forward'))
     await callback.answer()
 
@@ -76,12 +78,12 @@ async def process_forward_press(callback: CallbackQuery):
 async def process_backward_press(callback: CallbackQuery):
     if users_db[callback.from_user.id]['page'] > 1:
         users_db[callback.from_user.id]['page'] -= 1
-        text = book[users_db[callback.from_user.id]['page']]
+        text = get_page(users_db[callback.from_user.id]['page'])
         await callback.message.edit_text(
             text=text,
             reply_markup=create_pagination_keyboard(
                 'backward',
-                f'{users_db[callback.from_user.id]["page"]}/{len(book)}',
+                f'{users_db[callback.from_user.id]["page"]}/{lenbook}',
                 'forward'))
     await callback.answer()
 
@@ -97,13 +99,13 @@ async def process_page_press(callback: CallbackQuery):
 # Этот хэндлер будет срабатывать на нажатие инлайн-кнопки
 # с закладкой из списка закладок
 async def process_bookmark_press(callback: CallbackQuery):
-    text = book[int(callback.data)]
+    text = get_page(int(callback.data))
     users_db[callback.from_user.id]['page'] = int(callback.data)
     await callback.message.edit_text(
         text=text,
         reply_markup=create_pagination_keyboard(
             'backward',
-            f'{users_db[callback.from_user.id]["page"]}/{len(book)}',
+            f'{users_db[callback.from_user.id]["page"]}/{lenbook}',
             'forward'))
     await callback.answer()
 
