@@ -1,20 +1,13 @@
-from aiogram import Dispatcher
+from aiogram import Bot
 from aiogram.types import BotCommand
+
+from lexicon.lexicon_ru import LEXICON_COMMANDS_RU
 
 
 # Регистрация команд, отображаемых в интерфейсе Telegram
-async def set_main_menu(dp: Dispatcher):
+async def set_main_menu(bot: Bot):
     main_menu_commands = [
-        BotCommand(command="/start", description="Перезапустить"),
-        BotCommand(command="/help", description="Справка по работе бота"),
-        BotCommand(command="/calc", description="Калькулятор"),
-        BotCommand(command="/dict", description="Словарь"),
-        BotCommand(command="/chatgpd", description="ChatGPD"),
-        BotCommand(command="/rock_paper_scissors", description="Камень, ножницы, бумага"),
-        BotCommand(command="/food", description="Заказать блюда"),
-        BotCommand(command="/stop", description="Сбросить текущее состояние"),
-        BotCommand(command='/beginning', description='В начало книги'),
-        BotCommand(command='/continue', description='Продолжить чтение'),
-        BotCommand(command='/bookmarks', description='Мои закладки'),
+        BotCommand(command=command,
+                   description=description) for command, description in LEXICON_COMMANDS_RU.items()
     ]
-    await dp.bot.set_my_commands(main_menu_commands)
+    await bot.set_my_commands(main_menu_commands)

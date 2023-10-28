@@ -1,9 +1,10 @@
 import openai
 
 from aiogram import Dispatcher, types
-from aiogram.utils.exceptions import CantParseEntities
-from aiogram.dispatcher import FSMContext
-from aiogram.dispatcher.filters.state import State, StatesGroup
+from aiogram.filters import Command
+# from aiogram.exceptions import CantParseEntities
+from aiogram.fsm.context import FSMContext
+from aiogram.fsm.state import State, StatesGroup
 
 
 class ChatGPDFSM(StatesGroup):
@@ -18,17 +19,17 @@ async def process_start_command(message: types.Message):
 
 async def process_message(message: types.Message):
     response = await generate_response(message.text)
-    try:
-        await message.reply(text=response)
-    except CantParseEntities as e:
-        print(message.text)
-        print(response)
-        print(e)
+    # try:
+    await message.reply(text=response)
+    # except CantParseEntities as e:
+    #     print(message.text)
+    #     print(response)
+    #     print(e)
 
 
 async def process_stop_command(message: types.Message, state: FSMContext):
     await message.reply("Дай знать если тебе понадобится помощь в будущем.")
-    await state.finish()
+    await state.clear()
 
 
 async def generate_response(prompt: str):
@@ -47,6 +48,6 @@ async def generate_response(prompt: str):
 
 
 def register_chatgpd_handlers(dp: Dispatcher):
-    dp.register_message_handler(process_start_command, commands=['chatgpd'])
-    dp.register_message_handler(process_stop_command, commands=['stop'], state=ChatGPDFSM.processing_message)
-    dp.register_message_handler(process_message, state=ChatGPDFSM.processing_message)
+    dp.message.register(process_start_command, Command('chatgpd'))
+    dp.message.register(process_stop_command, Command('stop'), ChatGPDFSM.processing_message)
+    dp.message.register(process_message, ChatGPDFSM.processing_message)

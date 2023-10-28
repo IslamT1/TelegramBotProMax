@@ -11,4 +11,4 @@ async def send_answer(message: Message):
 
 # Функция для регистрации хэндлера. Вызывается в исполняемом файле bot.py
 def register_other_handlers(dp: Dispatcher):
-    dp.register_message_handler(send_answer, state="*")
+    dp.message.register(send_answer)  # , state="*")

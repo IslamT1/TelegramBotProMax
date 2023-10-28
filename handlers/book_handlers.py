@@ -1,6 +1,7 @@
 from copy import deepcopy
 
-from aiogram import Dispatcher
+from aiogram import Dispatcher, F
+from aiogram.filters import Command
 from aiogram.types import CallbackQuery, Message
 
 from databases.database import user_dict_template, users_db
@@ -144,16 +145,16 @@ async def process_del_bookmark_press(callback: CallbackQuery):
 
 # Функция для регистрации хэндлеров пользователя в диспетчере
 def register_book_handlers(dp: Dispatcher):
-    dp.register_message_handler(process_beginning_command, commands=['beginning'])
-    dp.register_message_handler(process_continue_command, commands=['continue'])
-    dp.register_message_handler(process_bookmarks_command, commands=['bookmarks'])
+    dp.message.register(process_beginning_command, Command('beginning'))
+    dp.message.register(process_continue_command, Command('continue'))
+    dp.message.register(process_bookmarks_command, Command('bookmarks'))
 
-    dp.register_callback_query_handler(process_forward_press, text="forward")
-    dp.register_callback_query_handler(process_backward_press, text="backward")
-    dp.register_callback_query_handler(process_page_press,
-                                       lambda x: '/' in x.data and x.data.replace('/', '').isdigit())
-    dp.register_callback_query_handler(process_bookmark_press, lambda x: x.data.isdigit())
-    dp.register_callback_query_handler(process_edit_press, text="edit_bookmarks")
-    dp.register_callback_query_handler(process_cancel_press, text="cancel")
-    dp.register_callback_query_handler(process_del_bookmark_press,
-                                       lambda x: 'del' in x.data and x.data[:-3].isdigit())
+    dp.callback_query.register(process_forward_press, F.text == "forward")
+    dp.callback_query.register(process_backward_press, F.text == "backward")
+    dp.callback_query.register(process_page_press,
+                               lambda x: '/' in x.data and x.data.replace('/', '').isdigit())
+    dp.callback_query.register(process_bookmark_press, lambda x: x.data.isdigit())
+    dp.callback_query.register(process_edit_press, F.text == "edit_bookmarks")
+    dp.callback_query.register(process_cancel_press, F.text == "cancel")
+    dp.callback_query.register(process_del_bookmark_press,
+                               lambda x: 'del' in x.data and x.data[:-3].isdigit())

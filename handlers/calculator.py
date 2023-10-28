@@ -1,6 +1,7 @@
 from aiogram import Dispatcher, types
-from aiogram.utils.callback_data import CallbackData
-from aiogram.utils.exceptions import MessageNotModified
+from aiogram.filters import Command
+from aiogram.filters.callback_data import CallbackData
+# from aiogram.filters.exception import MessageNotModified
 from contextlib import suppress
 
 user_data = {}
@@ -34,8 +35,9 @@ def get_keyboard():
 
 
 async def update_num_text(message: types.Message, new_value: str):
-    with suppress(MessageNotModified):
-        await message.edit_text(f"{new_value}", reply_markup=get_keyboard())
+    # with suppress(MessageNotModified):
+    #     await message.edit_text(f"{new_value}", reply_markup=get_keyboard())
+    pass
 
 
 async def cmd_numbers(message: types.Message):
@@ -157,6 +159,6 @@ async def callbacks_num_change(call: types.CallbackQuery, callback_data: dict):
 
 
 def register_handlers_calc(dp: Dispatcher):
-    dp.register_message_handler(cmd_numbers, commands="calc")
+    dp.message.register(cmd_numbers, Command(commands="calc"))
     dp.register_callback_query_handler(callbacks_num_change, callback_numbers.filter(
         action=["7", "8", "9", "<", "4", "5", "6", "-", "1", "2", "3", "+", "/", "0", "*", "="]))

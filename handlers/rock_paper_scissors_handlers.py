@@ -1,8 +1,9 @@
-from aiogram import Dispatcher, types
+from aiogram import Dispatcher, types, F
 from aiogram.types import Message
-from aiogram.dispatcher import FSMContext
-from aiogram.dispatcher.filters import Text
-from aiogram.dispatcher.filters.state import State, StatesGroup
+from aiogram.filters import Command
+from aiogram.fsm.context import FSMContext
+# from aiogram.types.message import Text
+from aiogram.fsm.state import State, StatesGroup
 
 from lexicon.lexicon_ru import LEXICON_RU
 from keyboards.keyboards import yes_no_kb, game_kb
@@ -28,7 +29,7 @@ async def process_yes_answer(message: Message, state: FSMContext):
 # Этот хэндлер срабатывает на отказ пользователя играть в игру
 async def process_no_answer(message: Message, state: FSMContext):
     await message.answer(text=LEXICON_RU['no'], reply_markup=types.ReplyKeyboardRemove())
-    await state.finish()
+    await state.clear()
 
 
 # Этот хэндлер срабатывает на любую из игровых кнопок
@@ -41,12 +42,12 @@ async def process_game_button(message: Message, state: FSMContext):
 
 # Функция для регистрации хэндлеров в диспетчере. Вызывается в исполняемом файле bot.py
 def register_user_handlers(dp: Dispatcher):
-    dp.register_message_handler(process_start_command, commands='rock_paper_scissors')
-    dp.register_message_handler(process_yes_answer,
-                                text=LEXICON_RU['yes_button'], state=RockPaperFSM.processing_rock_paper)
-    dp.register_message_handler(process_no_answer,
-                                text=LEXICON_RU['no_button'], state=RockPaperFSM.processing_rock_paper)
-    dp.register_message_handler(process_game_button,
-                                Text(equals=[LEXICON_RU['rock'],
-                                             LEXICON_RU['paper'],
-                                             LEXICON_RU['scissors']]), state=RockPaperFSM.processing_rock_paper)
+    dp.message.register(process_start_command, Command('rock_paper_scissors'))
+    dp.message.register(process_yes_answer,
+                        F.text == LEXICON_RU['yes_button'], RockPaperFSM.processing_rock_paper)
+    dp.message.register(process_no_answer,
+                        F.text == LEXICON_RU['no_button'], RockPaperFSM.processing_rock_paper)
+    # dp.register_message_handler(process_game_button,
+    #                             Text(equals=[LEXICON_RU['rock'],
+    #                                          LEXICON_RU['paper'],
+    #                                          LEXICON_RU['scissors']]), state=RockPaperFSM.processing_rock_paper)

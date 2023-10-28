@@ -1,7 +1,8 @@
 from aiogram import Dispatcher, types
-from aiogram.dispatcher import FSMContext
-from aiogram.dispatcher.filters.state import State, StatesGroup
-
+from aiogram.filters import Command
+from aiogram.fsm.context import FSMContext
+from aiogram.fsm.state import State, StatesGroup
+from aiogram.utils.keyboard import ReplyKeyboardBuilder
 
 available_food_names = ["суши", "спагетти", "хачапури"]
 available_food_sizes = ["маленькую", "среднюю", "большую"]
@@ -14,11 +15,11 @@ class OrderFood(StatesGroup):
 
 # Обратите внимание: есть второй аргумент
 async def food_start(message: types.Message, state: FSMContext):
-    keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True)
+    keyboard = ReplyKeyboardBuilder()
     for name in available_food_names:
-        keyboard.add(name)
-    await message.answer("Выберите блюдо:", reply_markup=keyboard)
-    await state.set_state(OrderFood.waiting_for_food_name.state)
+        keyboard.add(types.KeyboardButton(text=name))
+    await message.answer("Выберите блюдо:", reply_markup=keyboard.as_markup(resize_keyboard=True))
+    await state.set_state(OrderFood.waiting_for_food_name)
 
 
 async def food_chosen(message: types.Message, state: FSMContext):
@@ -27,11 +28,11 @@ async def food_chosen(message: types.Message, state: FSMContext):
         return
     await state.update_data(chosen_food=message.text.lower())
 
-    keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True)
+    keyboard = ReplyKeyboardBuilder()
     for size in available_food_sizes:
-        keyboard.add(size)
-    await state.set_state(OrderFood.waiting_for_food_size.state)
-    await message.answer("Теперь выберите размер порции:", reply_markup=keyboard)
+        keyboard.add(types.KeyboardButton(text=size))
+    await state.set_state(OrderFood.waiting_for_food_size)
+    await message.answer("Теперь выберите размер порции:", reply_markup=keyboard.as_markup(resize_keyboard=True))
 
 
 async def food_size_chosen(message: types.Message, state: FSMContext):
@@ -39,11 +40,12 @@ async def food_size_chosen(message: types.Message, state: FSMContext):
         await message.answer("Пожалуйста, выберите размер порции, используя клавиатуру ниже.")
         return
     user_data = await state.get_data()
-    await message.answer(f"Вы заказали {message.text.lower()} порцию {user_data['chosen_food']}.", reply_markup=types.ReplyKeyboardRemove())
-    await state.finish()
+    await message.answer(f"Вы заказали {message.text.lower()} порцию {user_data['chosen_food']}.",
+                         reply_markup=types.ReplyKeyboardRemove())
+    await state.clear()
 
 
 def register_handlers_food(dp: Dispatcher):
-    dp.register_message_handler(food_start, commands="food", state="*")
-    dp.register_message_handler(food_chosen, state=OrderFood.waiting_for_food_name)
-    dp.register_message_handler(food_size_chosen, state=OrderFood.waiting_for_food_size)
+    dp.message.register(food_start, Command("food"))  # , state="*")
+    dp.message.register(food_chosen, OrderFood.waiting_for_food_name)
+    dp.message.register(food_size_chosen, OrderFood.waiting_for_food_size)
