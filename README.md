@@ -15,7 +15,7 @@
 
 ### Установка 🔧
 1. Клонирование репозитория 💾  
-```git clone https://github.com/[username]/[repo-name].git``` 🔍
+```git clone https://github.com/IslamTambiev/TelegramBotProMax.git``` 🔍
 
 2. Установка зависимостей 📦  
 ```pip install -r requirements.txt``` 🐍
