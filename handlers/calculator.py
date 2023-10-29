@@ -160,5 +160,5 @@ async def callbacks_num_change(call: types.CallbackQuery, callback_data: dict):
 
 def register_handlers_calc(dp: Dispatcher):
     dp.message.register(cmd_numbers, Command(commands="calc"))
-    dp.register_callback_query_handler(callbacks_num_change, callback_numbers.filter(
+    dp.callback_query.register(callbacks_num_change, callback_numbers.filter(
         action=["7", "8", "9", "<", "4", "5", "6", "-", "1", "2", "3", "+", "/", "0", "*", "="]))

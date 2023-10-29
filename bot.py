@@ -9,12 +9,11 @@ from aiogram.fsm.storage.memory import MemoryStorage
 from aiogram.enums.parse_mode import ParseMode
 
 from keyboards.set_menu import set_main_menu
+from handlers import book_handlers, other_handlers
 from handlers.food import register_handlers_food
 from handlers.common import register_handlers_common
 # from handlers.calculator import register_handlers_calc
 from handlers.inline_mode import register_inline_handlers
-from handlers.book_handlers import register_book_handlers
-from handlers.other_handlers import register_other_handlers
 from handlers.chatgpd_handlers import register_chatgpd_handlers
 from handlers.rock_paper_scissors_handlers import register_user_handlers
 
@@ -24,16 +23,21 @@ from config_data.config import Config, load_config
 logger = logging.getLogger(__name__)
 
 
+# Функция для регистрации всех роутеров
+def register_all_routers(dp):
+    dp.include_router(book_handlers.router)
+    dp.include_router(other_handlers.router)
+
+
 # Функция для регистрации всех хэндлеров
 def register_all_handlers(dp: Dispatcher) -> None:
     # register_handlers_calc(dp)
-    register_book_handlers(dp)
+    # register_book_handlers(dp)
     register_handlers_food(dp)
     register_inline_handlers(dp)
     register_user_handlers(dp)
     register_chatgpd_handlers(dp)
     register_handlers_common(dp)
-    register_other_handlers(dp)
 
 
 # Функция конфигурирования и запуска бота
@@ -54,6 +58,9 @@ async def main():
     bot = Bot(token=config.tg_bot.token, parse_mode=ParseMode.HTML)
     dp = Dispatcher(storage=MemoryStorage())
     openai.api_key = config.tg_bot.openai_token
+
+    # Регистрируем все роутеры
+    register_all_routers(dp)
 
     # Регистрируем все хэндлеры
     register_all_handlers(dp)

@@ -1,17 +1,20 @@
 from copy import deepcopy
 
-from aiogram import Dispatcher, F
+from aiogram import F, Router
 from aiogram.filters import Command
 from aiogram.types import CallbackQuery, Message
 
 from databases.database import user_dict_template, users_db
+from filters.filters import IsDelBookmarkCallbackData, IsDigitCallbackData
 from keyboards.bookmarks_kb import (create_bookmarks_keyboard,
                                     create_edit_keyboard)
 from keyboards.pagination_kb import create_pagination_keyboard
 from lexicon.lexicon_ru import LEXICON_RU
 from app.bookdbworker import get_page
 
-lenbook = 13
+router: Router = Router()
+
+lenbook: int = 13
 
 
 # Этот хэндлер будет срабатывать на команду "/beginning"
@@ -22,7 +25,7 @@ async def process_beginning_command(message: Message):
     users_db[message.from_user.id]['page'] = 1
     text = get_page(users_db[message.from_user.id]['page'])
     await message.answer(
-        text=text,
+        text=text[0][0],
         reply_markup=create_pagination_keyboard(
             'backward',
             f'{users_db[message.from_user.id]["page"]}/{lenbook}',
@@ -37,7 +40,7 @@ async def process_continue_command(message: Message):
         users_db[message.from_user.id] = deepcopy(user_dict_template)
     text = get_page(users_db[message.from_user.id]['page'])
     await message.answer(
-        text=text,
+        text=text[0][0],
         reply_markup=create_pagination_keyboard(
             'backward',
             f'{users_db[message.from_user.id]["page"]}/{lenbook}',
@@ -66,7 +69,7 @@ async def process_forward_press(callback: CallbackQuery):
         users_db[callback.from_user.id]['page'] += 1
         text = get_page(users_db[callback.from_user.id]['page'])
         await callback.message.edit_text(
-            text=text,
+            text=text[0][0],
             reply_markup=create_pagination_keyboard(
                 'backward',
                 f'{users_db[callback.from_user.id]["page"]}/{lenbook}',
@@ -81,7 +84,7 @@ async def process_backward_press(callback: CallbackQuery):
         users_db[callback.from_user.id]['page'] -= 1
         text = get_page(users_db[callback.from_user.id]['page'])
         await callback.message.edit_text(
-            text=text,
+            text=text[0][0],
             reply_markup=create_pagination_keyboard(
                 'backward',
                 f'{users_db[callback.from_user.id]["page"]}/{lenbook}',
@@ -143,18 +146,16 @@ async def process_del_bookmark_press(callback: CallbackQuery):
     await callback.answer()
 
 
-# Функция для регистрации хэндлеров пользователя в диспетчере
-def register_book_handlers(dp: Dispatcher):
-    dp.message.register(process_beginning_command, Command('beginning'))
-    dp.message.register(process_continue_command, Command('continue'))
-    dp.message.register(process_bookmarks_command, Command('bookmarks'))
+# Регистрация хэндлеров пользователя в диспетчере
+router.message.register(process_beginning_command, Command(commands='beginning'))
+router.message.register(process_continue_command, Command(commands='continue'))
+router.message.register(process_bookmarks_command, Command(commands='bookmarks'))
 
-    dp.callback_query.register(process_forward_press, F.text == "forward")
-    dp.callback_query.register(process_backward_press, F.text == "backward")
-    dp.callback_query.register(process_page_press,
+router.callback_query.register(process_forward_press, F.data == "forward")
+router.callback_query.register(process_backward_press, F.data == "backward")
+router.callback_query.register(process_page_press,
                                lambda x: '/' in x.data and x.data.replace('/', '').isdigit())
-    dp.callback_query.register(process_bookmark_press, lambda x: x.data.isdigit())
-    dp.callback_query.register(process_edit_press, F.text == "edit_bookmarks")
-    dp.callback_query.register(process_cancel_press, F.text == "cancel")
-    dp.callback_query.register(process_del_bookmark_press,
-                               lambda x: 'del' in x.data and x.data[:-3].isdigit())
+router.callback_query.register(process_bookmark_press, IsDigitCallbackData())
+router.callback_query.register(process_edit_press, F.data == "edit_bookmarks")
+router.callback_query.register(process_cancel_press, F.data == "cancel")
+router.callback_query.register(process_del_bookmark_press, IsDelBookmarkCallbackData())

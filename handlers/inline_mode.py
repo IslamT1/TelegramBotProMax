@@ -22,8 +22,8 @@ def fix_html(text):
 
 # Инлайн режим
 async def inline_handler(query: types.InlineQuery):
-    slova = get_links(query.query or None)
-    if len(slova) == 0:
+    words = get_links(query.query or None)
+    if len(words) == 0:
         switch_text = "Перейти в бота >>"
         return await query.answer([],
                                   cache_time=60,
@@ -31,7 +31,7 @@ async def inline_handler(query: types.InlineQuery):
                                   switch_pm_parameter="qwer",
                                   switch_pm_text=switch_text)
     articles = [types.InlineQueryResultArticle(
-        id=item[0],
+        id=str(item[0]),
         title=item[1],
         description=re.sub(CLEANR, '', item[2])[:150],
         hide_url=True,
@@ -39,7 +39,7 @@ async def inline_handler(query: types.InlineQuery):
         input_message_content=types.InputTextMessageContent(
             message_text=f"<b>{item[1]}</b> - {fix_html(item[2][:5000])}",
             parse_mode="HTML"
-        )) for item in slova]
+        )) for item in words]
     await query.answer(articles,
                        cache_time=60,
                        is_personal=True)

@@ -12,9 +12,9 @@ class ChatGPDFSM(StatesGroup):
     processing_message = State()
 
 
-async def process_start_command(message: types.Message):
+async def process_start_command(message: types.Message, state: FSMContext):
     await message.reply("Чем могу помочь?\nДля выхода из чата с ChatGPD введи /stop.")
-    await ChatGPDFSM.processing_message.set()
+    await state.set_state(ChatGPDFSM.processing_message)
 
 
 async def process_message(message: types.Message):

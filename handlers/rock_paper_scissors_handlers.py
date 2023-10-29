@@ -2,7 +2,6 @@ from aiogram import Dispatcher, types, F
 from aiogram.types import Message
 from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
-# from aiogram.types.message import Text
 from aiogram.fsm.state import State, StatesGroup
 
 from lexicon.lexicon_ru import LEXICON_RU
@@ -16,9 +15,9 @@ class RockPaperFSM(StatesGroup):
 
 
 # Этот хэндлер срабатывает на команду /rock_paper_scissors
-async def process_start_command(message: Message):
+async def process_start_command(message: Message, state: FSMContext):
     await message.answer(text=LEXICON_RU['/rock_paper_scissors'], reply_markup=yes_no_kb)
-    await RockPaperFSM.processing_rock_paper.set()
+    await state.set_state(RockPaperFSM.processing_rock_paper)
 
 
 # Этот хэндлер срабатывает на согласие пользователя играть в игру
@@ -47,7 +46,7 @@ def register_user_handlers(dp: Dispatcher):
                         F.text == LEXICON_RU['yes_button'], RockPaperFSM.processing_rock_paper)
     dp.message.register(process_no_answer,
                         F.text == LEXICON_RU['no_button'], RockPaperFSM.processing_rock_paper)
-    # dp.register_message_handler(process_game_button,
-    #                             Text(equals=[LEXICON_RU['rock'],
-    #                                          LEXICON_RU['paper'],
-    #                                          LEXICON_RU['scissors']]), state=RockPaperFSM.processing_rock_paper)
+    dp.message.register(process_game_button,
+                        F.text.in_([LEXICON_RU['rock'],
+                                    LEXICON_RU['paper'],
+                                    LEXICON_RU['scissors']]), RockPaperFSM.processing_rock_paper)
