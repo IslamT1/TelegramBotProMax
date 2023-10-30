@@ -12,7 +12,7 @@ from keyboards.set_menu import set_main_menu
 from handlers import book_handlers, other_handlers
 from handlers.food import register_handlers_food
 from handlers.common import register_handlers_common
-# from handlers.calculator import register_handlers_calc
+from handlers.calculator import register_handlers_calc
 from handlers.inline_mode import register_inline_handlers
 from handlers.chatgpd_handlers import register_chatgpd_handlers
 from handlers.rock_paper_scissors_handlers import register_user_handlers
@@ -23,21 +23,20 @@ from config_data.config import Config, load_config
 logger = logging.getLogger(__name__)
 
 
-# Функция для регистрации всех роутеров
-def register_all_routers(dp):
-    dp.include_router(book_handlers.router)
-    dp.include_router(other_handlers.router)
-
-
 # Функция для регистрации всех хэндлеров
 def register_all_handlers(dp: Dispatcher) -> None:
-    # register_handlers_calc(dp)
-    # register_book_handlers(dp)
+    register_handlers_calc(dp)
     register_handlers_food(dp)
     register_inline_handlers(dp)
     register_user_handlers(dp)
     register_chatgpd_handlers(dp)
     register_handlers_common(dp)
+
+
+# Функция для регистрации всех роутеров
+def register_all_routers(dp):
+    dp.include_router(book_handlers.router)
+    dp.include_router(other_handlers.router)
 
 
 # Функция конфигурирования и запуска бота
@@ -59,11 +58,11 @@ async def main():
     dp = Dispatcher(storage=MemoryStorage())
     openai.api_key = config.tg_bot.openai_token
 
-    # Регистрируем все роутеры
-    register_all_routers(dp)
-
     # Регистрируем все хэндлеры
     register_all_handlers(dp)
+
+    # Регистрируем все роутеры
+    register_all_routers(dp)
 
     # Установка команд бота
     await set_main_menu(bot)

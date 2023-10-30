@@ -1,43 +1,46 @@
 from aiogram import Dispatcher, types
 from aiogram.filters import Command
 from aiogram.filters.callback_data import CallbackData
-# from aiogram.filters.exception import MessageNotModified
+from aiogram.exceptions import TelegramBadRequest
 from contextlib import suppress
 
 user_data = {}
 
+
 # calc - префикс, action - название аргумента, которым будем передавать значение
-callback_numbers = CallbackData("calc", "action")
+# callback_numbers = CallbackData("calc", "action")
+
+class CalcCallbackFactory(CallbackData, prefix="calc"):
+    action: str
 
 
 def get_keyboard():
     buttons = [
-        types.InlineKeyboardButton(text=" 7", callback_data=callback_numbers.new(action="7")),
-        types.InlineKeyboardButton(text=" 8 ", callback_data=callback_numbers.new(action="8")),
-        types.InlineKeyboardButton(text=" 9 ", callback_data=callback_numbers.new(action="9")),
-        types.InlineKeyboardButton(text=" <= ", callback_data=callback_numbers.new(action="<")),
-        types.InlineKeyboardButton(text=" 4 ", callback_data=callback_numbers.new(action="4")),
-        types.InlineKeyboardButton(text=" 5 ", callback_data=callback_numbers.new(action="5")),
-        types.InlineKeyboardButton(text=" 6 ", callback_data=callback_numbers.new(action="6")),
-        types.InlineKeyboardButton(text=" - ", callback_data=callback_numbers.new(action="-")),
-        types.InlineKeyboardButton(text=" 1 ", callback_data=callback_numbers.new(action="1")),
-        types.InlineKeyboardButton(text=" 2 ", callback_data=callback_numbers.new(action="2")),
-        types.InlineKeyboardButton(text=" 3 ", callback_data=callback_numbers.new(action="3")),
-        types.InlineKeyboardButton(text=" + ", callback_data=callback_numbers.new(action="+")),
-        types.InlineKeyboardButton(text=" / ", callback_data=callback_numbers.new(action="/")),
-        types.InlineKeyboardButton(text=" 0 ", callback_data=callback_numbers.new(action="0")),
-        types.InlineKeyboardButton(text=" * ", callback_data=callback_numbers.new(action="*")),
-        types.InlineKeyboardButton(text=" = ", callback_data=callback_numbers.new(action="=")),
+        [types.InlineKeyboardButton(text=" 7", callback_data=CalcCallbackFactory(action="7").pack()),
+         types.InlineKeyboardButton(text=" 8 ", callback_data=CalcCallbackFactory(action="8").pack()),
+         types.InlineKeyboardButton(text=" 9 ", callback_data=CalcCallbackFactory(action="9").pack()),
+         types.InlineKeyboardButton(text=" <= ", callback_data=CalcCallbackFactory(action="<").pack())],
+        [types.InlineKeyboardButton(text=" 4 ", callback_data=CalcCallbackFactory(action="4").pack()),
+         types.InlineKeyboardButton(text=" 5 ", callback_data=CalcCallbackFactory(action="5").pack()),
+         types.InlineKeyboardButton(text=" 6 ", callback_data=CalcCallbackFactory(action="6").pack()),
+         types.InlineKeyboardButton(text=" - ", callback_data=CalcCallbackFactory(action="-").pack())],
+        [types.InlineKeyboardButton(text=" 1 ", callback_data=CalcCallbackFactory(action="1").pack()),
+         types.InlineKeyboardButton(text=" 2 ", callback_data=CalcCallbackFactory(action="2").pack()),
+         types.InlineKeyboardButton(text=" 3 ", callback_data=CalcCallbackFactory(action="3").pack()),
+         types.InlineKeyboardButton(text=" + ", callback_data=CalcCallbackFactory(action="+").pack())],
+        [types.InlineKeyboardButton(text=" / ", callback_data=CalcCallbackFactory(action="/").pack()),
+         types.InlineKeyboardButton(text=" 0 ", callback_data=CalcCallbackFactory(action="0").pack()),
+         types.InlineKeyboardButton(text=" * ", callback_data=CalcCallbackFactory(action="*").pack()),
+         types.InlineKeyboardButton(text=" = ", callback_data=CalcCallbackFactory(action="=").pack()), ]
     ]
-    keyboard = types.InlineKeyboardMarkup(row_width=4)
-    keyboard.add(*buttons)
+    keyboard = types.InlineKeyboardMarkup(inline_keyboard=buttons)
     return keyboard
 
 
 async def update_num_text(message: types.Message, new_value: str):
-    # with suppress(MessageNotModified):
-    #     await message.edit_text(f"{new_value}", reply_markup=get_keyboard())
-    pass
+    with suppress(TelegramBadRequest):
+        await message.edit_text(f"{new_value}", reply_markup=get_keyboard())
+    # pass
 
 
 async def cmd_numbers(message: types.Message):
@@ -45,9 +48,9 @@ async def cmd_numbers(message: types.Message):
     await message.answer("0", reply_markup=get_keyboard())
 
 
-async def callbacks_num_change(call: types.CallbackQuery, callback_data: dict):
+async def callbacks_num_change(call: types.CallbackQuery, callback_data: CalcCallbackFactory):
     user_value = user_data.get(call.from_user.id, ["", "", ""])
-    action = callback_data["action"]
+    action = callback_data.action
     if user_value[1] == "":
         v = 0
     else:
@@ -160,5 +163,4 @@ async def callbacks_num_change(call: types.CallbackQuery, callback_data: dict):
 
 def register_handlers_calc(dp: Dispatcher):
     dp.message.register(cmd_numbers, Command(commands="calc"))
-    dp.callback_query.register(callbacks_num_change, callback_numbers.filter(
-        action=["7", "8", "9", "<", "4", "5", "6", "-", "1", "2", "3", "+", "/", "0", "*", "="]))
+    dp.callback_query.register(callbacks_num_change, CalcCallbackFactory.filter())
