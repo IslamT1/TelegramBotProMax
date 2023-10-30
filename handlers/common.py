@@ -1,6 +1,7 @@
 from aiogram import Dispatcher, types, F
-from aiogram.filters import Command, CommandStart
+from aiogram.filters import Command, CommandStart, StateFilter
 from aiogram.fsm.context import FSMContext
+from aiogram.fsm.state import default_state
 from aiogram.types import Message
 
 from lexicon.lexicon_ru import LEXICON_RU
@@ -26,5 +27,5 @@ async def cmd_cancel(message: types.Message, state: FSMContext):
 def register_handlers_common(dp: Dispatcher):
     dp.message.register(cmd_start, CommandStart())  # , state="*")
     dp.message.register(process_help_command, Command(commands='help'))
-    dp.message.register(cmd_cancel, Command("stop"))  # , state="*")
+    dp.message.register(cmd_cancel, Command(commands='stop'))  # , state="*")
     dp.message.register(cmd_cancel, F.text.lower() == "стоп")  # , state="*")

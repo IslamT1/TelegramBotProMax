@@ -30,12 +30,12 @@ LEXICON_RU: dict[str, str] = {
 LEXICON_COMMANDS_RU: dict[str, str] = {
     '/start': 'Перезапустить',
     '/help': 'Справка по работе бота',
+    '/stop': 'Сбросить текущее состояние',
     '/calc': 'Калькулятор',
     '/dict': 'Словарь',
     '/chatgpd': 'ChatGPD',
     '/rock_paper_scissors': 'Камень, ножницы, бумага',
     '/food': 'Заказать блюда',
-    '/stop': 'Сбросить текущее состояние',
     '/beginning': 'В начало книги',
     '/continue': 'Продолжить чтение',
     '/bookmarks': 'Мои закладки',

@@ -25,12 +25,12 @@ logger = logging.getLogger(__name__)
 
 # Функция для регистрации всех хэндлеров
 def register_all_handlers(dp: Dispatcher) -> None:
+    register_handlers_common(dp)
     register_handlers_calc(dp)
     register_handlers_food(dp)
     register_inline_handlers(dp)
     register_user_handlers(dp)
     register_chatgpd_handlers(dp)
-    register_handlers_common(dp)
 
 
 # Функция для регистрации всех роутеров
