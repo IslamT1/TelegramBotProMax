@@ -1,7 +1,7 @@
 # TelegramBotProMax 🤖
 
 
-Телеграм бот с разными функциями
+Телеграм бот с разными функциями 🐍
 
 ## Возможности 🎉
 - Калькулятор 💻
@@ -11,18 +11,29 @@
 - Книга 📚
 
 ## Начиная 🚀
-Эти инструкции помогут вам скопировать и запустить проект на вашем локальном компьютере для целей разработки и тестирования.
+Эти инструкции помогут вам скопировать и запустить проект на вашем локальном компьютере для целей разработки и тестирования. 🔍
 
 ### Установка 🔧
 1. Клонирование репозитория 💾  
-```git clone https://github.com/IslamTambiev/TelegramBotProMax.git``` 🔍
+    ```shell
+    git clone https://github.com/IslamTambiev/TelegramBotProMax.git
+    ```
 
 2. Установка зависимостей 📦  
-```pip install -r requirements.txt``` 🐍
+    ```shell
+    pip install -r requirements.txt
+    ```
 
 ### Использование 💡
 1. Создайте бота, поговорив с [BotFather](https://telegram.me/BotFather) в Телеграм. 💬
 2. Переименуйте файл `.env.example` на `.env`.
 3. Получите токен бота и вставьте его в `.env` file. 🔑
 4. Запустите бота командой 🏃‍♂️  
-```python bot.py``` 💻
+    ```shell
+    python bot.py
+    ```
+
+### Или запуск с помощью Docker 💻
+```shell  
+docker-compose up
+```
