@@ -1,9 +1,10 @@
-FROM 3.10.13-alpine3.18
+FROM python:3.10-alpine
 LABEL authors="IslamTambiev"
+
 WORKDIR /app
+
 COPY requirements.txt requirements.txt
-RUN pip3 install --upgrade setuptools
-RUN pip3 install -r requirements.txt
-RUN chmod 755 .
+RUN pip install -r requirements.txt
 COPY . .
+
 CMD python bot.py
