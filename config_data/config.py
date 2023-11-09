@@ -24,6 +24,12 @@ class Config:
 
 
 def load_config() -> Config:
+    """
+    Load the configuration settings from the environment variables and create a Config object.
+
+    Returns:
+        Config: The configuration object containing the loaded settings.
+    """
     # Создаем экземпляр класса Env
     env: Env = Env()
     # Добавляем в переменные окружения данные, прочитанные из файла .env
