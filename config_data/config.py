@@ -11,7 +11,7 @@ class DatabaseConfig:
 
 
 @dataclass
-class TgBot:
+class TgBotConfig:
     token: str  # Токен для доступа к телеграм-боту
     admin_ids: list[int]  # Список id администраторов бота
     openai_token: str  # Токен для доступа к chatgpd
@@ -19,7 +19,7 @@ class TgBot:
 
 @dataclass
 class Config:
-    tg_bot: TgBot
+    tg_bot: TgBotConfig
     db: DatabaseConfig
 
 
@@ -30,9 +30,9 @@ def load_config() -> Config:
     env.read_env()
 
     # Создаем экземпляр класса Config и наполняем его данными из переменных окружения
-    return Config(tg_bot=TgBot(token=env('BOT_TOKEN'),
-                               admin_ids=list(map(int, env.list('ADMIN_IDS'))),
-                               openai_token=env('OPEN_AI_TOKEN')),
+    return Config(tg_bot=TgBotConfig(token=env('BOT_TOKEN'),
+                                     admin_ids=list(map(int, env.list('ADMIN_IDS'))),
+                                     openai_token=env('OPEN_AI_TOKEN')),
                   db=DatabaseConfig(db_name=env('DB_NAME'),
                                     db_host=env('DB_HOST'),
                                     db_user=env('DB_USER'),
