@@ -43,3 +43,6 @@ def load_config() -> Config:
                                     db_host=env('DB_HOST'),
                                     db_user=env('DB_USER'),
                                     db_pass=env('DB_PASS')))
+
+
+config: Config = load_config()

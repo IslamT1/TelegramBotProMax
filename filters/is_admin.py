@@ -1,10 +1,7 @@
 from aiogram.filters import BaseFilter
 from aiogram.types import Message
 
-from config_data.config import Config, load_config
-
-# Загружаем конфиг в переменную config
-config: Config = load_config()
+from config_data.config import config
 
 
 class IsAdmin(BaseFilter):

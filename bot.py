@@ -17,7 +17,7 @@ from handlers.inline_mode import register_inline_handlers
 from handlers.chatgpd_handlers import register_chatgpd_handlers
 from handlers.rock_paper_scissors_handlers import register_user_handlers
 
-from config_data.config import Config, load_config
+from config_data.config import config
 
 # Инициализируем логгер
 logger = logging.getLogger(__name__)
@@ -51,7 +51,7 @@ async def main():
     logger.info("Starting bot")
 
     # Загружаем конфиг в переменную config
-    config: Config = load_config()
+    # config: Config = load_config()
 
     # Объявление и инициализация объектов бота и диспетчера
     bot = Bot(token=config.tg_bot.token, parse_mode=ParseMode.HTML)
