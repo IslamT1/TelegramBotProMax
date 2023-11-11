@@ -23,15 +23,15 @@ def get_links(search_query: str = None):
         список: список кортежей, содержащих идентификатор слова, слово и перевод.
     """
     if search_query:
-        statement = f"""SELECT _id, slovo, perevod FROM slovarrkb WHERE slovo LIKE '{search_query}%'
+        statement = f"""SELECT id, slovo, perevod FROM slovarrkb WHERE slovo LIKE '{search_query}%'
                         UNION ALL
-                        SELECT _id + 100000, slovo, perevod FROM slovarkbr WHERE slovo LIKE '{search_query}%'
+                        SELECT id + 100000, slovo, perevod FROM slovarkbr WHERE slovo LIKE '{search_query}%'
                         ORDER BY slovo
                         LIMIT 50"""
     else:
-        statement = f"""SELECT _id, slovo, perevod FROM slovarrkb
+        statement = f"""SELECT id, slovo, perevod FROM slovarrkb
                         UNION ALL
-                        SELECT _id + 100000, slovo, perevod FROM slovarkbr
+                        SELECT id + 100000, slovo, perevod FROM slovarkbr
                         ORDER BY slovo
                         LIMIT 50"""
     result = cursor.execute(statement)

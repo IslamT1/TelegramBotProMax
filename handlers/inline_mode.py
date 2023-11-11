@@ -37,9 +37,10 @@ async def inline_handler(query: types.InlineQuery):
         hide_url=True,
         # thumb_url=f"https://img.youtube.com/vi/{item[0]}/1.jpg",
         input_message_content=types.InputTextMessageContent(
-            message_text=f"<b>{item[1]}</b> - {fix_html(item[2][:5000])}",
+            message_text=f"<b>{item[1]}</b> - {fix_html(item[2][:5000])}".replace(r"\u000a\u000a", "\n\n"),
             parse_mode="HTML"
         )) for item in words]
+
     await query.answer(articles,
                        cache_time=60,
                        is_personal=True)
@@ -65,6 +66,6 @@ async def chosen_handler(chosen_result: types.ChosenInlineResult):
 
 
 def register_inline_handlers(dp: Dispatcher):
-    dp.inline_query.register(inline_handler)  # , state="*")
-    dp.chosen_inline_result.register(chosen_handler)  # , state="*")
-    dp.message.register(switch_to_inline_button, Command("dict"))  # , state="*")
+    dp.inline_query.register(inline_handler)
+    dp.chosen_inline_result.register(chosen_handler)
+    dp.message.register(switch_to_inline_button, Command("dict"))
